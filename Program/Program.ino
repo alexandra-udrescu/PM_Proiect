@@ -14,7 +14,7 @@
 #define SMALL_SENS 1
 
 #define SENS_BTN 2
-#define ON_OFF_BTN 7
+#define ON_OFF_BTN 5
 
 /*
 Senzor de fum:
