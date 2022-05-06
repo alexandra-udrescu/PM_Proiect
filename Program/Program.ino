@@ -58,7 +58,7 @@ void change_sensitivity() {
       sensitive = 1;
     Serial.print("CHANGED SENSITIVITY!");
     Serial.println(sensitive);
-    }
+  }
 }
 
 void on_off_modif() {
