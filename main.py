@@ -69,5 +69,5 @@ def animate(frame):
     axs[1, 1].set_title('Temperature [*C]')
 
 
-ani = animation.FuncAnimation(fig, animate, interval=1500)
+ani = animation.FuncAnimation(fig, animate, interval=2000)
 plt.show()
