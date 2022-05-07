@@ -221,7 +221,7 @@ void loop() {
   }
   else
     digitalWrite (ledAlert, LOW);
-  delay(400);
+  delay(900);
 }
 
 float concentratie_mq135(int t, int h, float V_mq135, float a, float b) {
