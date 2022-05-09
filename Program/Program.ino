@@ -6,8 +6,8 @@
 #define R_L_mq2 4.7 // rezistenta RL_MQ-2 in kohm
 #define R_L_mq135 20.0 // rezistenta RL_MQ-135 in kohm
 
-#define R_0_mq2 0.4 // rezistenta R0_MQ-2 determinata la calibrare in aer curat
-#define R_0_mq135 1.5 // rezistenta R0_MQ-135 determinata la calibrare in aer curat
+#define R_0_mq2 0.15 // rezistenta R0_MQ-2 determinata la calibrare in aer curat
+#define R_0_mq135 0.5 // rezistenta R0_MQ-135 determinata la calibrare in aer curat
 
 #define BIG_SENS 3
 #define NORMAL_SENS 2
@@ -293,7 +293,7 @@ int ciggarete_check(
   float co_conc, float co2_conc, float temp) {
   int count = 0;
   
-  if(smoke_conc >= 17 || co2_conc >= 500) {
+  if(smoke_conc >= 17 || co2_conc >= 450) {
     count ++;
     Serial.print("MQ2 ");
   }
@@ -303,7 +303,7 @@ int ciggarete_check(
     Serial.print("SharpLed ");
   }
   
-  if(toluen_conc >= 4 || co_conc >= 5){
+  if(toluen_conc >= 0.4 || co_conc >= 1){
     count ++;
     Serial.print("MQ135 ");
   }
