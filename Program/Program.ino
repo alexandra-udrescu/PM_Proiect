@@ -51,7 +51,9 @@ int on_off; // spune daca alarma este pornita sau nu
 int lastDebounce_on_off;
 
 void change_sensitivity() {
-  if(millis() - lastDebounce > 500) {
+  if(digitalRead(SENS_BTN) != LOW)
+    return;
+  if(millis() - lastDebounce > 1000) {
     lastDebounce = millis();
     sensitive ++;
     if(sensitive == BIG_SENS + 1)
@@ -62,9 +64,11 @@ void change_sensitivity() {
 }
 
 void on_off_modif() {
-  if(millis() - lastDebounce_on_off > 500) {
+  if(digitalRead(ON_OFF_BTN) != LOW)
+    return;
+  if(millis() - lastDebounce_on_off > 1000) {
+    lastDebounce_on_off = millis();
     if(on_off == 0) {
-      lastDebounce_on_off = millis();
       Serial.println();
       Serial.println("ON");
       on_off = 1;
