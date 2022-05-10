@@ -2,7 +2,7 @@
 
 dht DHT;
 
-#define dhtPin A2   // pinul la care este conectat senzorul de temperatura si umiditate
+#define dhtPin 12   // pinul la care este conectat senzorul de temperatura si umiditate
 #define mq2Pin A0   // Vout senzor MQ-2 este conectat pe pinul A0
 
 #define R_L 5.0 // tensiunea Rl in kohm

@@ -14,7 +14,7 @@ for ax in axs.flat:
     ax.set(xlabel='', ylabel='')
     ax.axes.xaxis.set_visible(False)
 
-arduino = serial.Serial(port='COM5', baudrate=9600)
+arduino = serial.Serial(port='COM6', baudrate=9600)
 
 arduino.readline()  # ignore header
 
@@ -27,6 +27,7 @@ while not lin.startswith('>'):
 lin = lin.replace(' ', '')
 lin = lin.replace('>', '')
 lin = lin.replace('\t', '')
+lin = lin.replace('*', '')
 inp = lin.split('|')
 mq2 = [float(inp[0])] * length
 mq135 = [float(inp[1])] * length
@@ -41,6 +42,7 @@ def animate(frame):
     line = line.replace(' ', '')
     line = line.replace('>', '')
     line = line.replace('\t', '')
+    line = line.replace('*', '')
     inputs = line.split('|')
     mq2.pop(0)
     mq2.append(float(inputs[0]))

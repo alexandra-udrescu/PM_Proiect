@@ -6,25 +6,25 @@
 #define R_L_mq2 4.7 // rezistenta RL_MQ-2 in kohm
 #define R_L_mq135 20.0 // rezistenta RL_MQ-135 in kohm
 
-#define R_0_mq2 0.15 // rezistenta R0_MQ-2 determinata la calibrare in aer curat
-#define R_0_mq135 0.5 // rezistenta R0_MQ-135 determinata la calibrare in aer curat
+#define R_0_mq2 0.55 // rezistenta R0_MQ-2 determinata la calibrare in aer curat
+#define R_0_mq135 1.65 // rezistenta R0_MQ-135 determinata la calibrare in aer curat
 
 #define BIG_SENS 3
 #define NORMAL_SENS 2
 #define SMALL_SENS 1
 
 #define SENS_BTN 2
-#define ON_OFF_BTN 5
+#define ON_OFF_BTN 3
 
 /*
 Senzor de fum:
 Tigara langa senzorii MQ-2, MQ-135 si Sharp_GP2Y1010AU0F
 Pragurile de alerta alese:
-    ->  1000ppm    - fum    - MQ-2 
+    ->  200ppm    - fum    - MQ-2 
     ->  0.45 mg/m3 - fum    - Sharp_GP2Y1010AU0F
     ->  0.7ppm     - toluen - MQ-135
     ->  5ppm       - CO     - MQ-135
-    ->  1000ppm    - CO2    - MQ-135
+    ->  1500ppm    - CO2    - MQ-2
 Daca minim 2 din acestea sunt peste prag => dau alarma
 */
 
@@ -33,7 +33,7 @@ dht DHT;
 LiquidCrystal_I2C lcd(0x27, 16, 4); // 0x27 adresa I2C, LCD1604 (16coloane & 4linii)
 LiquidCrystal_I2C lcd_mic(0x26, 16, 2); // 0x26 adresa I2C, LCD1602 (16coloane & 2linii)
 
-#define dhtPin A2 // pinul pentru Date senzor de temperatura si umiditate - DTH11 
+#define dhtPin 12 // pinul pentru Date senzor de temperatura si umiditate - DTH11 
 
 #define sharpPin A3 // pinul pentru Vout senzor de fum - Sharp_GP2Y1010AU0F
 #define sharpLed 11 // pinul pentru control LED IR senzor de fum - Sharp_GP2Y10
@@ -42,7 +42,7 @@ LiquidCrystal_I2C lcd_mic(0x26, 16, 2); // 0x26 adresa I2C, LCD1602 (16coloane &
 #define mq2Pin A0 // pinul pentru Vout senzor gaze si fum MQ-2
 
 #define ledAlert 6 // pinul la care este conectat ledul de avertizare
-#define buzzAlert 3 // pinul la care este conectat buzzerul de avertizare
+#define buzzAlert 5 // pinul la care este conectat buzzerul de avertizare
 
 int lastDebounce; // folosit pentru a elimina problema de bounce a butonului apasat
 int sensitive; // retine senzitivitatea senzorilor 
@@ -62,7 +62,7 @@ void change_sensitivity() {
 }
 
 void on_off_modif() {
-  if(millis() - lastDebounce > 500) {
+  if(millis() - lastDebounce_on_off > 500) {
     if(on_off == 0) {
       Serial.println();
       Serial.println("ON");
@@ -103,7 +103,7 @@ void setup() {
   pinMode(SENS_BTN, INPUT_PULLUP);
   pinMode(ON_OFF_BTN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(SENS_BTN), change_sensitivity, FALLING);
-  attachInterrupt(digitalPinToInterrupt(ON_OFF_BTN), on_off_modif, RISING);
+  attachInterrupt(digitalPinToInterrupt(ON_OFF_BTN), on_off_modif, FALLING);
 
   sensitive = NORMAL_SENS;
   lastDebounce = millis();
@@ -127,6 +127,9 @@ void loop() {
     
   // senzor temperatura si umiditate DHT11
   int info = DHT.read11(dhtPin); // info de la senzorul de umiditate si temperatura
+  Serial.print("*");
+  Serial.print("*");
+  Serial.print("*");
   int temp = DHT.temperature;
   int humid = DHT.humidity;
   Serial.print(temp); // temperatura curenta [grade C]
@@ -212,7 +215,7 @@ void loop() {
   //CO2 – MQ-2
   lcd.setCursor(-4,3);
   lcd.print("CO2:");
-  float co2_conc = concentratie_mq135(temp, humid, tensiune_mq135, 112.351, -2.898) + 400;
+  float co2_conc = concentratie_mq135(temp, humid, tensiune_mq135, 112.351, -2.898) * 400;
   lcd.print(co2_conc, 2);
   
   if(ciggarete_check(smoke_conc, dens_fum, toluen_conc, co_conc, co2_conc, temp) >= sensitive) {
@@ -292,8 +295,19 @@ int ciggarete_check(
   float smoke_conc, float smoke_density, float toluen_conc, 
   float co_conc, float co2_conc, float temp) {
   int count = 0;
-  
-  if(smoke_conc >= 17 || co2_conc >= 450) {
+
+  Serial.print(smoke_conc);
+  Serial.print(" ");
+  Serial.print(co2_conc);
+  Serial.print(" ");
+  Serial.print(smoke_density);
+  Serial.print(" ");
+  Serial.print(toluen_conc);
+  Serial.print(" ");
+  Serial.print(co_conc);
+  Serial.println(" ");
+    
+  if(smoke_conc >= 200 || co2_conc >= 1500) {
     count ++;
     Serial.print("MQ2 ");
   }
@@ -303,7 +317,7 @@ int ciggarete_check(
     Serial.print("SharpLed ");
   }
   
-  if(toluen_conc >= 0.4 || co_conc >= 1){
+  if(toluen_conc >= 0.7 || co_conc >= 5){
     count ++;
     Serial.print("MQ135 ");
   }
