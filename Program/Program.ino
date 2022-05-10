@@ -64,6 +64,7 @@ void change_sensitivity() {
 void on_off_modif() {
   if(millis() - lastDebounce_on_off > 500) {
     if(on_off == 0) {
+      lastDebounce_on_off = millis();
       Serial.println();
       Serial.println("ON");
       on_off = 1;
